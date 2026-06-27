@@ -1,0 +1,95 @@
+{% extends "templates/web.html" %}
+
+{% block title %}Gallery{% endblock %}
+
+{% block head_include %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false },
+    theme: {
+      extend: {
+        fontFamily: { serif: ['Cormorant Garamond', 'Georgia', 'serif'] },
+        colors: { accent: '#c45c26' }
+      }
+    }
+  }
+</script>
+{% endblock %}
+
+{% block page_content %}
+<div class="max-w-6xl mx-auto px-4 md:px-8 py-8">
+
+  <div class="mb-8">
+    <h1 class="font-serif text-5xl md:text-6xl font-semibold tracking-tight text-stone-800" style="font-family:'Cormorant Garamond',Georgia,serif;">{{ site_title or "Gallery" }}</h1>
+    <p class="text-stone-400 text-lg mt-1" style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;">Selected works</p>
+  </div>
+
+  {% if mediums %}
+  <div class="flex gap-2 flex-wrap mb-8">
+    <button class="ap-filter rounded-full border border-stone-800 bg-stone-800 text-white text-sm px-4 py-1.5 cursor-pointer transition-all" data-medium="all">All</button>
+    {% for m in mediums %}
+    <button class="ap-filter rounded-full border border-stone-300 bg-white text-stone-700 text-sm px-4 py-1.5 cursor-pointer hover:border-stone-800 transition-all" data-medium="{{ m }}">{{ m }}</button>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if artworks %}
+  <div class="columns-2 md:columns-3 lg:columns-4 gap-4">
+    {% for art in artworks %}
+    <a class="ap-card break-inside-avoid mb-4 block group no-underline" href="/artwork?name={{ art.name }}" data-medium="{{ art.medium or '' }}">
+      <div class="relative overflow-hidden rounded-xl bg-stone-100">
+        {% if art.image %}
+        <img src="{{ art.image }}" alt="{{ art.title }}" loading="lazy" class="w-full h-auto block transition-transform duration-300 group-hover:scale-[1.02]">
+        {% endif %}
+        {% if art.for_sale %}
+        <span class="absolute top-2 right-2 bg-accent text-white font-bold px-2 py-0.5 rounded-full uppercase tracking-wider" style="font-size:0.6rem;">For Sale</span>
+        {% endif %}
+      </div>
+      <div class="pt-2 pb-3 px-1">
+        <p class="text-sm font-semibold text-stone-800 truncate m-0">{{ art.title }}</p>
+        {% if art.medium %}
+        <span class="text-xs text-stone-400 block mt-0.5">{{ art.medium }}</span>
+        {% endif %}
+        {% if art.for_sale and art.price %}
+        <span class="text-xs text-accent font-semibold">{{ art.price_display }}</span>
+        {% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-16 text-stone-400">No artworks yet.</div>
+  {% endif %}
+
+  {% if is_artist %}
+  <div class="text-center mt-10">
+    <a href="/manage" class="text-stone-400 text-xs hover:text-stone-600 transition-colors">Manage artworks</a>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+  document.querySelectorAll('.ap-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.ap-filter').forEach(b => {
+        b.classList.remove('bg-stone-800', 'text-white', 'border-stone-800');
+        b.classList.add('bg-white', 'text-stone-700', 'border-stone-300');
+      });
+      btn.classList.remove('bg-white', 'text-stone-700', 'border-stone-300');
+      btn.classList.add('bg-stone-800', 'text-white', 'border-stone-800');
+
+      const medium = btn.dataset.medium;
+      document.querySelectorAll('.ap-card').forEach(card => {
+        if (medium === 'all' || card.dataset.medium === medium) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

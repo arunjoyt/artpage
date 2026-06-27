@@ -1,0 +1,51 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ art.title }}{% endblock %}
+
+{% block head_include %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false },
+    theme: {
+      extend: {
+        fontFamily: { serif: ['Cormorant Garamond', 'Georgia', 'serif'] },
+        colors: { accent: '#c45c26' }
+      }
+    }
+  }
+</script>
+{% endblock %}
+
+{% block page_content %}
+<div class="max-w-3xl mx-auto px-4 md:px-8 py-8">
+
+  {% if art.image %}
+  <div class="rounded-2xl overflow-hidden mb-8 bg-stone-100">
+    <img src="{{ art.image }}" alt="{{ art.title }}" class="w-full h-auto block">
+  </div>
+  {% endif %}
+
+  <div class="mb-8">
+    <h1 class="font-semibold text-stone-800 mb-1" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:2.75rem;line-height:1.1;">{{ art.title }}</h1>
+    {% if art.medium %}
+    <p class="text-stone-400 text-sm mb-0.5">{{ art.medium }}</p>
+    {% endif %}
+    {% if art.year %}
+    <p class="text-stone-400 text-sm mb-4">{{ art.year }}</p>
+    {% endif %}
+    {% if art.description %}
+    <p class="text-stone-600 leading-relaxed mb-5 whitespace-pre-wrap" style="font-size:0.95rem;">{{ art.description }}</p>
+    {% endif %}
+    {% if art.for_sale and art.price %}
+    <p class="text-2xl font-bold text-accent mb-6">{{ art.price_display }}</p>
+    {% endif %}
+  </div>
+
+  <a href="/gallery" class="inline-flex items-center gap-1.5 rounded-full border border-stone-200 px-5 py-2 text-stone-700 text-sm hover:border-stone-800 hover:text-stone-900 transition-all no-underline">
+    ← Back to Gallery
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "templates/web.html" %}
+
+{% block title %}Manage Artworks{% endblock %}
+
+{% block head_include %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false },
+    theme: {
+      extend: {
+        fontFamily: { serif: ['Cormorant Garamond', 'Georgia', 'serif'] },
+        colors: { accent: '#c45c26' }
+      }
+    }
+  }
+</script>
+{% endblock %}
+
+{% block page_content %}
+<div class="max-w-2xl mx-auto px-4 py-8">
+
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="font-semibold text-stone-800 m-0" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:2rem;">Artworks</h1>
+    <a href="/upload" class="inline-flex items-center bg-stone-800 text-white rounded-full px-4 py-1.5 text-sm font-semibold no-underline hover:bg-stone-900 transition-colors">+ Upload</a>
+  </div>
+
+  {% if artworks %}
+  <div class="flex flex-col gap-2">
+    {% for art in artworks %}
+    <a class="flex items-center gap-3 bg-white rounded-xl px-3 py-3 shadow-sm no-underline hover:shadow-md transition-shadow" href="/edit-artwork?name={{ art.name }}">
+      {% if art.image %}
+      <img class="w-14 h-14 rounded-lg object-cover flex-shrink-0 bg-stone-100" src="{{ art.image }}" alt="{{ art.title }}" loading="lazy">
+      {% else %}
+      <div class="w-14 h-14 rounded-lg bg-stone-100 flex-shrink-0"></div>
+      {% endif %}
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-semibold text-stone-800 truncate">{{ art.title }}</div>
+        <div class="text-xs text-stone-400 mt-0.5">{{ art.medium or '—' }}</div>
+      </div>
+      <span class="text-xs font-bold uppercase tracking-wide px-2 py-0.5 rounded-full flex-shrink-0
+        {% if art.is_published %}bg-green-50 text-green-700{% else %}bg-amber-50 text-amber-700{% endif %}">
+        {% if art.is_published %}Live{% else %}Draft{% endif %}
+      </span>
+    </a>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="text-center py-12 text-stone-400">
+    <p class="mb-4">No artworks yet.</p>
+    <a href="/upload" class="inline-flex items-center bg-stone-800 text-white rounded-full px-5 py-2 text-sm font-semibold no-underline hover:bg-stone-900 transition-colors">Upload your first artwork</a>
+  </div>
+  {% endif %}
+
+  <div class="text-center mt-8">
+    <a href="/gallery" class="text-stone-400 text-xs hover:text-stone-600 transition-colors no-underline">← View gallery</a>
+  </div>
+</div>
+{% endblock %}

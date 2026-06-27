@@ -29,7 +29,7 @@ app_license = "mit"
 # app_include_js = "/assets/artpage/js/artpage.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/artpage/css/artpage.css"
+web_include_css = "/assets/artpage/css/artpage.css"
 # web_include_js = "/assets/artpage/js/artpage.js"
 
 # include custom scss in every website theme (without file extension ".scss")
@@ -57,7 +57,7 @@ app_license = "mit"
 # ----------
 
 # application home page (will override Website Settings)
-# home_page = "login"
+home_page = "gallery"
 
 # website user home page (by Role)
 # role_home_page = {

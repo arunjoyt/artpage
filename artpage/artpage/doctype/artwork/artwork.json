@@ -1,0 +1,75 @@
+{
+ "name": "Artwork",
+ "module": "Artpage",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "autoname": "format:ART-{####}",
+ "naming_rule": "Expression",
+ "is_submittable": 0,
+ "track_changes": 0,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "label": "Image",
+   "reqd": 1
+  },
+  {
+   "fieldname": "medium",
+   "fieldtype": "Data",
+   "label": "Medium",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "year",
+   "fieldtype": "Int",
+   "label": "Year"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "for_sale",
+   "fieldtype": "Check",
+   "label": "For Sale",
+   "default": "0"
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "Price",
+   "depends_on": "eval:doc.for_sale"
+  },
+  {
+   "fieldname": "is_published",
+   "fieldtype": "Check",
+   "label": "Published",
+   "default": "1",
+   "in_list_view": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Guest",
+   "read": 1
+  }
+ ]
+}
