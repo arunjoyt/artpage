@@ -68,6 +68,13 @@
    "delete": 1
   },
   {
+   "role": "Artist",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
    "role": "Guest",
    "read": 1
   }

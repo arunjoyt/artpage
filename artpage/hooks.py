@@ -166,6 +166,11 @@ home_page = "gallery"
 # 	],
 # }
 
+# Fixtures
+# --------
+
+fixtures = [{"dt": "Role", "filters": [["name", "=", "Artist"]]}]
+
 # Testing
 # -------
 

@@ -16,7 +16,7 @@ def get_context(context):
     context.artworks = artworks
     mediums = sorted({a.medium for a in artworks if a.medium})
     context.mediums = mediums
-    context.is_artist = frappe.session.user != "Guest"
+    context.is_artist = frappe.session.user != "Guest" and frappe.has_permission("Artwork", "write")
 
     context.site_title = (
         frappe.db.get_value("Website Settings", "Website Settings", "app_name") or ""

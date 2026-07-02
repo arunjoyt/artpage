@@ -6,6 +6,8 @@ def get_context(context):
     if frappe.session.user == "Guest":
         frappe.local.flags.redirect_location = "/login?redirect-to=/manage"
         raise frappe.Redirect
+    if not frappe.has_permission("Artwork", "write"):
+        frappe.throw("You are not permitted to edit artworks.", frappe.PermissionError)
 
     name = frappe.form_dict.get("name")
     if not name:
