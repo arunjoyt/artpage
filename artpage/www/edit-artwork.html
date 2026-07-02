@@ -147,7 +147,6 @@ btnSave.addEventListener('click', async () => {
       const formData = new FormData();
       formData.append('file', imgInput.files[0]);
       formData.append('is_private', 0);
-      formData.append('doctype', 'Artwork');
       formData.append('optimize', 1);
       const uploadRes = await fetch('/api/method/upload_file', {
         method: 'POST',
