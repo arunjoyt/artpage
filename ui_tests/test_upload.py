@@ -43,10 +43,10 @@ def test_upload_form_has_required_fields(logged_in_page):
 def test_price_field_hidden_until_for_sale_checked(logged_in_page):
     logged_in_page.goto(f"{BASE_URL}/upload")
     price_group = logged_in_page.locator("#price-group")
-    expect(price_group).to_have_class("ap-form-group ap-price-group hidden")
+    expect(price_group).to_contain_class("hidden")
 
     logged_in_page.locator("#f-forsale").check()
-    expect(price_group).not_to_have_class("hidden")
+    expect(price_group).not_to_contain_class("hidden")
     logged_in_page.screenshot(path=f"{SCREENSHOTS}/upload_price_visible.png", full_page=True)
 
 
@@ -55,7 +55,7 @@ def test_upload_submit_without_image_shows_error(logged_in_page):
     logged_in_page.fill("#f-title", "No Image Art")
     logged_in_page.click("#btn-submit")
     status = logged_in_page.locator("#status-msg")
-    expect(status).to_have_class("ap-status error")
+    expect(status).to_contain_class("bg-red-50")
     expect(status).to_contain_text("photo")
 
 
@@ -64,7 +64,7 @@ def test_upload_submit_without_title_shows_error(logged_in_page):
     # Don't fill title, don't attach file
     logged_in_page.click("#btn-submit")
     status = logged_in_page.locator("#status-msg")
-    expect(status).to_have_class("ap-status error")
+    expect(status).to_contain_class("bg-red-50")
 
 
 def test_manage_page_shows_artworks(logged_in_page):

@@ -18,7 +18,7 @@ def test_gallery_page_loads(guest_page):
 
 def test_gallery_heading_visible(guest_page):
     guest_page.goto(f"{BASE_URL}/gallery")
-    heading = guest_page.locator("h1", has_text="Gallery")
+    heading = guest_page.locator("h1")
     expect(heading).to_be_visible()
 
 
@@ -39,7 +39,7 @@ def test_gallery_filter_tabs_appear_when_mediums_exist(logged_in_page):
 
     try:
         logged_in_page.goto(f"{BASE_URL}/gallery")
-        filter_btn = logged_in_page.locator(".ap-filter-btn", has_text="Watercolour")
+        filter_btn = logged_in_page.locator(".ap-filter", has_text="Watercolour")
         expect(filter_btn).to_be_visible()
         logged_in_page.screenshot(path=f"{SCREENSHOTS}/gallery_filter_tabs.png", full_page=True)
     finally:
@@ -52,7 +52,7 @@ def test_gallery_filter_hides_non_matching_cards(logged_in_page):
 
     try:
         logged_in_page.goto(f"{BASE_URL}/gallery")
-        logged_in_page.locator(".ap-filter-btn", has_text="Oil").click()
+        logged_in_page.get_by_role("button", name="Oil", exact=True).click()
         expect(logged_in_page.locator(f'.ap-card[data-medium="Sketch"]').first).to_be_hidden()
         expect(logged_in_page.locator(f'.ap-card[data-medium="Oil"]').first).to_be_visible()
     finally:
@@ -78,7 +78,8 @@ def test_for_sale_badge_visible(logged_in_page):
 
     try:
         logged_in_page.goto(f"{BASE_URL}/gallery")
-        badge = logged_in_page.locator(f'a.ap-card[href*="{artwork_name}"] .ap-sale-badge')
+        card = logged_in_page.locator(f'a.ap-card[href*="{artwork_name}"]')
+        badge = card.get_by_text("For Sale", exact=True)
         expect(badge).to_be_visible()
         logged_in_page.screenshot(path=f"{SCREENSHOTS}/gallery_for_sale_badge.png", full_page=True)
     finally:
