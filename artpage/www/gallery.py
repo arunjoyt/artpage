@@ -1,5 +1,7 @@
 import frappe
 
+from artpage.utils import get_currency_symbol
+
 
 def get_context(context):
     context.no_cache = 1
@@ -10,9 +12,10 @@ def get_context(context):
         order_by="creation desc",
         ignore_permissions=True,
     )
+    currency_symbol = get_currency_symbol()
     for art in artworks:
         if art.price:
-            art.price_display = "{:,.0f}".format(art.price)
+            art.price_display = "{}{:,.0f}".format(currency_symbol, art.price)
     context.artworks = artworks
     mediums = sorted({a.medium for a in artworks if a.medium})
     context.mediums = mediums

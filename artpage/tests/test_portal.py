@@ -7,6 +7,8 @@ import types
 import frappe
 from frappe.tests.utils import FrappeTestCase as IntegrationTestCase
 
+from artpage.utils import get_currency_symbol
+
 
 def make_artwork(**kwargs):
     defaults = {
@@ -68,7 +70,7 @@ class TestGalleryContext(IntegrationTestCase):
         ctx = self._get_gallery_context()
         for_sale_arts = [a for a in ctx.artworks if a.for_sale and a.price]
         self.assertTrue(len(for_sale_arts) > 0)
-        self.assertEqual(for_sale_arts[0].price_display, "12,500")
+        self.assertEqual(for_sale_arts[0].price_display, f"{get_currency_symbol()}12,500")
 
     def test_artworks_ordered_newest_first(self):
         art1 = make_artwork(title="Older")
@@ -121,7 +123,7 @@ class TestArtworkDetailContext(IntegrationTestCase):
     def test_price_display_on_for_sale_artwork(self):
         art = make_artwork(for_sale=1, price=3000.0, is_published=1)
         ctx = self._get_artwork_context(art.name)
-        self.assertEqual(ctx.art.price_display, "3,000")
+        self.assertEqual(ctx.art.price_display, f"{get_currency_symbol()}3,000")
 
     def test_page_title_set_to_artwork_title(self):
         art = make_artwork(title="My Landscape", is_published=1)

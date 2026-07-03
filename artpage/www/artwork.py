@@ -1,5 +1,7 @@
 import frappe
 
+from artpage.utils import get_currency_symbol
+
 
 def get_context(context):
     context.no_cache = 1
@@ -17,7 +19,7 @@ def get_context(context):
         frappe.throw("Artwork not found", frappe.DoesNotExistError)
 
     if art.price:
-        art.price_display = "{:,.0f}".format(art.price)
+        art.price_display = "{}{:,.0f}".format(get_currency_symbol(), art.price)
 
     context.art = art
     context.title = art.title

@@ -1,5 +1,7 @@
 import frappe
 
+from artpage.utils import get_currency_symbol
+
 
 def get_context(context):
     context.no_cache = 1
@@ -26,3 +28,4 @@ def get_context(context):
 
     context.art = art
     context.title = "Edit — " + art.title
+    context.currency_symbol = get_currency_symbol()
