@@ -1,6 +1,6 @@
 import frappe
 
-from artpage.utils import get_currency_symbol
+from artpage.utils import get_currency_symbol, with_cache_buster
 
 
 def get_context(context):
@@ -12,12 +12,13 @@ def get_context(context):
     art = frappe.db.get_value(
         "Artwork",
         {"name": name, "is_published": 1},
-        ["name", "title", "image", "medium", "year", "description", "for_sale", "price"],
+        ["name", "title", "image", "medium", "year", "description", "for_sale", "price", "modified"],
         as_dict=True,
     )
     if not art:
         frappe.throw("Artwork not found", frappe.DoesNotExistError)
 
+    art.image = with_cache_buster(art.image, art.modified)
     if art.price:
         art.price_display = "{}{:,.0f}".format(get_currency_symbol(), art.price)
 

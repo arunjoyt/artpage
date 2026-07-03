@@ -25,5 +25,10 @@ def rotate_artwork_image(artwork):
         rotated.save(file_path)
 
     frappe.db.set_value("File", file_doc.name, "file_size", os.path.getsize(file_path))
+    # Re-set the same image value to bump Artwork.modified — the file URL is
+    # unchanged, so pages need a fresh "modified" to cache-bust the <img> src
+    # (see artpage.utils.with_cache_buster), or browsers keep serving the
+    # pre-rotation bytes they already cached for that URL.
+    frappe.db.set_value("Artwork", artwork, "image", image_url)
 
     return {"image_url": image_url}

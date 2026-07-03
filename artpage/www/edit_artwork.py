@@ -1,6 +1,6 @@
 import frappe
 
-from artpage.utils import get_currency_symbol
+from artpage.utils import get_currency_symbol, with_cache_buster
 
 
 def get_context(context):
@@ -19,13 +19,14 @@ def get_context(context):
     art = frappe.db.get_value(
         "Artwork",
         name,
-        ["name", "title", "image", "medium", "year", "description", "for_sale", "price", "is_published"],
+        ["name", "title", "image", "medium", "year", "description", "for_sale", "price", "is_published", "modified"],
         as_dict=True,
     )
     if not art:
         frappe.local.flags.redirect_location = "/manage"
         raise frappe.Redirect
 
+    art.image = with_cache_buster(art.image, art.modified)
     context.art = art
     context.title = "Edit — " + art.title
     context.currency_symbol = get_currency_symbol()

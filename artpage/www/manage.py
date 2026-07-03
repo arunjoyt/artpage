@@ -1,5 +1,7 @@
 import frappe
 
+from artpage.utils import with_cache_buster
+
 
 def get_context(context):
     context.no_cache = 1
@@ -11,9 +13,11 @@ def get_context(context):
 
     artworks = frappe.db.get_all(
         "Artwork",
-        fields=["name", "title", "image", "medium", "is_published", "creation"],
+        fields=["name", "title", "image", "medium", "is_published", "creation", "modified"],
         order_by="creation desc",
         ignore_permissions=True,
     )
+    for art in artworks:
+        art.image = with_cache_buster(art.image, art.modified)
     context.artworks = artworks
     context.title = "Manage Artworks"
