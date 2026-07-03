@@ -1,8 +1,14 @@
 """
 Integration tests for Artwork DocType permissions and API behaviour.
 """
+import io
+
 import frappe
 from frappe.tests.utils import FrappeTestCase as IntegrationTestCase
+from frappe.utils.file_manager import save_file
+from PIL import Image
+
+from artpage.api import rotate_artwork_image
 
 
 def make_artwork(**kwargs):
@@ -17,6 +23,12 @@ def make_artwork(**kwargs):
     doc = frappe.get_doc(defaults)
     doc.insert(ignore_permissions=True)
     return doc
+
+
+def make_image_file(width=40, height=20):
+    buf = io.BytesIO()
+    Image.new("RGB", (width, height), color="red").save(buf, format="PNG")
+    return save_file("rotate_test.png", buf.getvalue(), None, None, is_private=0)
 
 
 class TestArtworkPermissions(IntegrationTestCase):
@@ -128,3 +140,33 @@ class TestArtworkQueries(IntegrationTestCase):
         )
         self.assertEqual(results[0].name, art2.name)
         self.assertEqual(results[1].name, art1.name)
+
+
+class TestRotateArtworkImage(IntegrationTestCase):
+
+    def test_rotate_swaps_dimensions_in_place(self):
+        file_doc = make_image_file(width=40, height=20)
+        art = make_artwork(image=file_doc.file_url)
+
+        rotate_artwork_image(art.name)
+
+        with Image.open(file_doc.get_full_path()) as img:
+            self.assertEqual(img.size, (20, 40))
+        self.assertEqual(
+            frappe.db.get_value("Artwork", art.name, "image"), file_doc.file_url
+        )
+
+    def test_rotate_requires_write_permission(self):
+        file_doc = make_image_file()
+        art = make_artwork(image=file_doc.file_url)
+
+        frappe.set_user("Guest")
+        try:
+            self.assertRaises(frappe.PermissionError, rotate_artwork_image, art.name)
+        finally:
+            frappe.set_user("Administrator")
+
+    def test_rotate_without_image_throws(self):
+        art = make_artwork()
+        frappe.db.set_value("Artwork", art.name, "image", None)
+        self.assertRaises(frappe.ValidationError, rotate_artwork_image, art.name)

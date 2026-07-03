@@ -41,6 +41,11 @@
         <button type="button" id="btn-choose-file"
           class="px-4 py-2.5 border border-stone-300 rounded-lg text-sm font-medium text-stone-700 bg-white cursor-pointer hover:border-stone-700 transition-colors"
           style="min-height:44px;">Choose from Gallery</button>
+        {% if art.image %}
+        <button type="button" id="btn-rotate"
+          class="px-4 py-2.5 border border-stone-300 rounded-lg text-sm font-medium text-stone-700 bg-white cursor-pointer hover:border-stone-700 transition-colors"
+          style="min-height:44px;">⟳ Rotate</button>
+        {% endif %}
       </div>
       <input type="file" id="img-input" accept="image/*" class="hidden">
       <input type="file" id="img-input-camera" accept="image/*" capture="environment" class="hidden">
@@ -110,6 +115,7 @@ const imgPreview     = document.getElementById('img-preview');
 const imgHint        = document.getElementById('img-hint');
 const btnTakePhoto   = document.getElementById('btn-take-photo');
 const btnChooseFile  = document.getElementById('btn-choose-file');
+const btnRotate      = document.getElementById('btn-rotate');
 const forSale        = document.getElementById('f-forsale');
 const priceGroup     = document.getElementById('price-group');
 const btnSave        = document.getElementById('btn-save');
@@ -124,6 +130,7 @@ btnChooseFile.addEventListener('click', () => imgInput.click());
 function handleFileSelect(file) {
   if (!file) return;
   selectedFile = file;
+  if (btnRotate) btnRotate.disabled = true;
   const reader = new FileReader();
   reader.onload = e => {
     imgPreview.src = e.target.result;
@@ -135,6 +142,32 @@ function handleFileSelect(file) {
 
 imgInput.addEventListener('change', () => handleFileSelect(imgInput.files[0]));
 imgInputCamera.addEventListener('change', () => handleFileSelect(imgInputCamera.files[0]));
+
+if (btnRotate) {
+  btnRotate.addEventListener('click', async () => {
+    btnRotate.disabled = true;
+    const originalLabel = btnRotate.textContent;
+    btnRotate.textContent = 'Rotating…';
+    try {
+      const res = await fetch('/api/method/artpage.api.rotate_artwork_image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Frappe-CSRF-Token': frappe.csrf_token,
+        },
+        body: JSON.stringify({ artwork: ARTWORK_NAME }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.exception || 'Rotate failed.');
+      imgPreview.src = data.message.image_url + '?t=' + Date.now();
+    } catch (err) {
+      showStatus(err.message || 'Rotate failed.', 'error');
+    } finally {
+      btnRotate.disabled = false;
+      btnRotate.textContent = originalLabel;
+    }
+  });
+}
 
 forSale.addEventListener('change', () => {
   priceGroup.classList.toggle('hidden', !forSale.checked);
