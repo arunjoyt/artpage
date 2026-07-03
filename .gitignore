@@ -5,3 +5,5 @@
 tags
 node_modules
 __pycache__
+CLAUDE.local.md
+ui_tests/screenshots/
